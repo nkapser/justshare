@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">JustShare</string>
+    <string name="share">Share</string>
+    <string name="show_apps_button">Show Installed Apps</string>
+</resources>

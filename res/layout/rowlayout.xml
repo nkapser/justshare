@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/list_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+
+    <ImageView 
+        android:id="@+id/appIcon"
+        android:layout_width="30sp" 
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:paddingLeft="2sp"
+        android:paddingRight="5sp"
+        android:contentDescription="@string/show_apps_button"/>
+    
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        />
+
+    <CheckBox
+        android:id="@+id/check"
+        android:layout_width="30sp"
+        android:layout_height="wrap_content"
+        android:focusable="false"
+        android:layout_gravity="center"
+        android:descendantFocusability="beforeDescendants" />
+
+</LinearLayout>
