@@ -1,5 +1,6 @@
 package com.kapserinc.justshare;
 
+import java.util.HashSet;
 import java.util.List;
 
 import android.content.Context;
@@ -14,16 +15,18 @@ import android.widget.TextView;
 public class JSArrayAdapter extends ArrayAdapter<JSModel> {
 
 	private final LayoutInflater inflater;
+	private final HashSet<Integer> selectedItems;
 	
-	public JSArrayAdapter(Context context, List<JSModel> modelList){
+	public JSArrayAdapter(Context context, List<JSModel> modelList, HashSet<Integer> selectedItems){
 		super(context, R.layout.rowlayout, R.id.textView1, modelList);
 		
+		this.selectedItems = selectedItems;
 		//Caching the layout inflater!
 		inflater = LayoutInflater.from(context);
 	}
 	
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent){		
+	public View getView(final int position, View convertView, ViewGroup parent){		
 		JSModel model = this.getItem(position);
 		
 		CheckBox checkBox;
@@ -47,6 +50,11 @@ public class JSArrayAdapter extends ArrayAdapter<JSModel> {
 					CheckBox cb = (CheckBox)v;
 					JSModel model = (JSModel) cb.getTag();					
 					model.setSelected(cb.isChecked());
+					if(cb.isChecked()){
+						selectedItems.add(position);
+					}else{
+						selectedItems.remove(position);
+					}
 				}
 			}); //Re-use if the view is already present
 		}else {

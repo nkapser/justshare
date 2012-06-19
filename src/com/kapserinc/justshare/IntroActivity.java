@@ -5,7 +5,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
+import com.kapserinc.justshare.R.id;
+
 import android.app.Activity;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -19,6 +23,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 public class IntroActivity extends Activity {
@@ -30,8 +35,17 @@ public class IntroActivity extends Activity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
+		MenuInflater inflater = getMenuInflater();		
 		inflater.inflate(R.menu.menulayout, menu);
+		
+		// Associate searchable configuration with the SearchView
+	    SearchManager searchManager =
+	           (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+	    SearchView searchView =
+	            (SearchView) menu.findItem(id.search).getActionView();
+	    searchView.setSearchableInfo(
+	            searchManager.getSearchableInfo(getComponentName()));
+	    
 		return true;
 	}
 
@@ -41,7 +55,7 @@ public class IntroActivity extends Activity {
 		case R.id.item1:
 			if (selectedItems.size() > 0) {
 				Toast.makeText(getApplicationContext(),
-						"Sharing: " + selectedItems.size() + " items...",
+						"Sharing: " + selectedItems.size() + " item(s) ...",
 						Toast.LENGTH_SHORT).show();
 				Intent i = new Intent();
 				i.setAction(Intent.ACTION_SEND);
@@ -49,13 +63,13 @@ public class IntroActivity extends Activity {
 				i.putExtra(Intent.EXTRA_TEXT, getSelectedApps());
 				i.putExtra(Intent.EXTRA_EMAIL, getSelectedApps());
 				i.putExtra(Intent.EXTRA_SUBJECT, "I have found "
-						+ selectedItems.size() + " interesting Apps");
+						+ selectedItems.size() + " interesting App(s)");
 				startActivity(Intent.createChooser(i,
 						getResources().getText(R.string.share)));
-			}else{
+			} else {
 				Toast.makeText(getApplicationContext(),
-						"Select atleast 1 App to share",
-						Toast.LENGTH_SHORT).show();				
+						"Select atleast 1 App to share", Toast.LENGTH_SHORT)
+						.show();
 			}
 			break;
 
@@ -107,22 +121,30 @@ public class IntroActivity extends Activity {
 			}
 		});
 
-		listItems = new ArrayList<JSModel>();
+		listItems = (ArrayList<JSModel>) getLastNonConfigurationInstance();
+		if (listItems == null) {
+			listItems = new ArrayList<JSModel>();
 
-		final PackageManager pm = getPackageManager();
-		List<ApplicationInfo> packages = pm
-				.getInstalledApplications(PackageManager.GET_META_DATA);
+			final PackageManager pm = getPackageManager();
+			List<ApplicationInfo> packages = pm
+					.getInstalledApplications(PackageManager.GET_META_DATA);
 
-		for (ApplicationInfo app : packages) {
-			if (!app.packageName.contains("com.android")) {
-				Drawable appIcon = app.loadIcon(pm);
-				JSModel model = new JSModel(app.loadLabel(pm).toString(),
-						appIcon, app.packageName);
-				listItems.add(model);
+			for (ApplicationInfo app : packages) {
+				if (!app.packageName.contains("com.android")) {
+					Drawable appIcon = app.loadIcon(pm);
+					JSModel model = new JSModel(app.loadLabel(pm).toString(),
+							appIcon, app.packageName);
+					listItems.add(model);
+				}
 			}
 		}
-
-		listAdapter = new JSArrayAdapter(this, listItems);
+		
+		listAdapter = new JSArrayAdapter(this, listItems, selectedItems);
 		listView.setAdapter(listAdapter);
+	}
+
+	@Override
+	public Object onRetainNonConfigurationInstance() {
+		return listItems;
 	}
 }

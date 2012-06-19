@@ -3,10 +3,23 @@
 
     <item
         android:id="@+id/item1"
-        android:title="@string/share"
-        android:icon="@drawable/share_2"
-        android:showAsAction="ifRoom|withText"                
-        >
+        android:icon="@drawable/share"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/share">
     </item>
+    <item
+        android:id="@+id/search"
+        android:actionViewClass="android.widget.SearchView"
+        android:showAsAction="collapseActionView|ifRoom"
+        android:title="@string/search_title">
+    </item>
+    <item
+        android:id="@+id/item2"
+        android:icon="@drawable/settings"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/settings">
+    </item>
+
+    
 
 </menu>
