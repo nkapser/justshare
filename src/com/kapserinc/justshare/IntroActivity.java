@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.ads.*;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -18,6 +20,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -27,6 +30,9 @@ public class IntroActivity extends Activity {
 	private ArrayAdapter<JSModel> listAdapter;
 	private ListView listView;
 	private HashSet<JSModel> selectedItems;
+	private AdRequest adRequest;
+	
+	private AdView adView;
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -83,8 +89,10 @@ public class IntroActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
+	
 		selectedItems = new HashSet<JSModel>();
 		listView = (ListView) findViewById(R.id.listView1);
+		
 		listView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
@@ -122,14 +130,31 @@ public class IntroActivity extends Activity {
 					listItems.add(model);
 				}
 			}
-		}
+		}		
 		
 		listAdapter = new JSArrayAdapter(this, listItems, selectedItems);
-		listView.setAdapter(listAdapter);
+		
+		adView =new AdView(this, AdSize.BANNER, "a14fe16eed30f4b");
+		adRequest = new AdRequest();
+		adView.loadAd(adRequest);
+		LinearLayout layout = (LinearLayout)findViewById(R.id.main_layout);
+		layout.addView(adView);
+		
+		listView.setAdapter(listAdapter);		
+
+	}
+	
+	@Override
+	public void onDestroy(){
+		if(adView != null){
+			adView.destroy();
+		}
+		super.onDestroy();
 	}
 
 	@Override
 	public Object onRetainNonConfigurationInstance() {
+		adView.loadAd(adRequest);
 		return listItems;
 	}
 

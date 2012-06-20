@@ -50,4 +50,9 @@ public class JSModel {
 	private String UriPrefix(){
 		return "http://play.google.com/store/";
 	}	
+	
+	@Override
+	public String toString(){
+		return name;
+	}
 }
