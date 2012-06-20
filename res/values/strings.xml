@@ -4,5 +4,6 @@
     <string name="share">Share</string>
     <string name="settings">Settings</string>
     <string name="search_title">Search App</string>
+    <string name="search_hint">Search App to Share</string>
     <string name="show_apps_button">Show Installed Apps</string>
 </resources>

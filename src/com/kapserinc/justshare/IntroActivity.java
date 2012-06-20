@@ -5,11 +5,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import com.kapserinc.justshare.R.id;
-
 import android.app.Activity;
-import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -23,7 +19,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.Toast;
 
 public class IntroActivity extends Activity {
@@ -31,24 +26,15 @@ public class IntroActivity extends Activity {
 	private ArrayList<JSModel> listItems;
 	private ArrayAdapter<JSModel> listAdapter;
 	private ListView listView;
-	private HashSet<Integer> selectedItems;
+	private HashSet<JSModel> selectedItems;
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();		
 		inflater.inflate(R.menu.menulayout, menu);
-		
-		// Associate searchable configuration with the SearchView
-	    SearchManager searchManager =
-	           (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-	    SearchView searchView =
-	            (SearchView) menu.findItem(id.search).getActionView();
-	    searchView.setSearchableInfo(
-	            searchManager.getSearchableInfo(getComponentName()));
-	    
-		return true;
+		return true;	
 	}
-
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -72,7 +58,7 @@ public class IntroActivity extends Activity {
 						.show();
 			}
 			break;
-
+			
 		default:
 			break;
 		}
@@ -82,9 +68,9 @@ public class IntroActivity extends Activity {
 
 	private String getSelectedApps() {
 		String formattedText = "";
-		Iterator<Integer> iterator = selectedItems.iterator();
+		Iterator<JSModel> iterator = selectedItems.iterator();
 		while (iterator.hasNext()) {
-			JSModel model = listAdapter.getItem(iterator.next());
+			JSModel model = iterator.next();
 			formattedText = formattedText + model.getName() + " : "
 					+ model.getMarketUri() + "\n\n";
 		}
@@ -97,7 +83,7 @@ public class IntroActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		selectedItems = new HashSet<Integer>();
+		selectedItems = new HashSet<JSModel>();
 		listView = (ListView) findViewById(R.id.listView1);
 		listView.setOnItemClickListener(new OnItemClickListener() {
 
@@ -110,14 +96,13 @@ public class IntroActivity extends Activity {
 				viewHolder.getCheckBox().setChecked(model.isSelected());
 
 				if (model.isSelected()) {
-					selectedItems.add(position);
+					selectedItems.add(model);
+					Toast.makeText(getApplicationContext(),
+							listItems.get(position).getName(), Toast.LENGTH_SHORT)
+							.show();
 				} else {
-					selectedItems.remove(position);
+					selectedItems.remove(model);
 				}
-
-				Toast.makeText(getApplicationContext(),
-						listItems.get(position).toString(), Toast.LENGTH_SHORT)
-						.show();
 			}
 		});
 
@@ -147,4 +132,5 @@ public class IntroActivity extends Activity {
 	public Object onRetainNonConfigurationInstance() {
 		return listItems;
 	}
+
 }
