@@ -8,6 +8,7 @@ import java.util.List;
 import com.google.ads.*;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -31,6 +32,8 @@ public class IntroActivity extends Activity {
 	private ListView listView;
 	private HashSet<JSModel> selectedItems;
 	private AdRequest adRequest;
+	
+	private ProgressDialog dialog;
 	
 	private AdView adView;
 
@@ -88,7 +91,11 @@ public class IntroActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-
+		
+		dialog = new ProgressDialog(this);
+		dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		dialog.setMessage("Loading...");
+		dialog.setCancelable(false);
 	
 		selectedItems = new HashSet<JSModel>();
 		listView = (ListView) findViewById(R.id.listView1);
@@ -130,7 +137,7 @@ public class IntroActivity extends Activity {
 					listItems.add(model);
 				}
 			}
-		}		
+		}						
 		
 		listAdapter = new JSArrayAdapter(this, listItems, selectedItems);
 		
@@ -141,7 +148,8 @@ public class IntroActivity extends Activity {
 		layout.addView(adView);
 		
 		listView.setAdapter(listAdapter);		
-
+		
+		dialog.dismiss();
 	}
 	
 	@Override
