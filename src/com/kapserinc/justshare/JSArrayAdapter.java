@@ -1,5 +1,6 @@
 package com.kapserinc.justshare;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -72,5 +73,9 @@ public class JSArrayAdapter extends ArrayAdapter<JSModel>{
 		imageView.setImageDrawable(model.getIcon());
 
 		return convertView;
+	}
+
+	public void setItems(ArrayList<JSModel> listItems) {
+		addAll(listItems);
 	}
 }
