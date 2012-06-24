@@ -2,7 +2,6 @@ package com.kapserinc.justshare;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -15,14 +14,13 @@ import android.widget.TextView;
 
 public class JSArrayAdapter extends ArrayAdapter<JSModel>{
 
+	private HashSet<JSModel> selectedItems;
 	private final LayoutInflater inflater;
-	private final HashSet<JSModel> selectedItems;
-	public JSArrayAdapter(Context context, List<JSModel> modelList,
-			HashSet<JSModel> selectedItems) {
-		super(context, R.layout.rowlayout, R.id.textView1, modelList);
+	
+	public JSArrayAdapter(Context context, ArrayList<JSModel> listItems, HashSet<JSModel> selectedItems) {
+		super(context, R.layout.rowlayout, R.id.app_label, listItems);
 
 		this.selectedItems = selectedItems;
-
 		// Caching the layout inflater!
 		inflater = LayoutInflater.from(context);
 	}
@@ -38,27 +36,28 @@ public class JSArrayAdapter extends ArrayAdapter<JSModel>{
 		if (convertView == null) {
 			convertView = inflater.inflate(R.layout.rowlayout, null);
 
-			imageView = (ImageView) convertView.findViewById(R.id.appIcon);
+			imageView = (ImageView) convertView.findViewById(R.id.app_icon);
 			imageView.setImageDrawable(model.getIcon());
 
-			textView = (TextView) convertView.findViewById(R.id.textView1);
-			checkBox = (CheckBox) convertView.findViewById(R.id.check);
+			textView = (TextView) convertView.findViewById(R.id.app_label);
+			checkBox = (CheckBox) convertView.findViewById(R.id.checkbox);
 
 			convertView.setTag(new JSViewHolder(textView, imageView, checkBox));
 			checkBox.setOnClickListener(new View.OnClickListener() {
-
+				
 				@Override
 				public void onClick(View v) {
 					CheckBox cb = (CheckBox) v;
 					JSModel model = (JSModel) cb.getTag();
-					model.setSelected(cb.isChecked());
-					if (cb.isChecked()) {
-						selectedItems.add(model);
-					} else {
+					if(cb.isChecked()){
+						selectedItems.add(model);						
+					}else{
 						selectedItems.remove(model);
 					}
+					model.setSelected(cb.isChecked());
 				}
 			}); // Re-use if the view is already present
+			
 		} else {
 			JSViewHolder viewHolder = (JSViewHolder) convertView.getTag();
 			checkBox = viewHolder.getCheckBox();
@@ -70,12 +69,8 @@ public class JSArrayAdapter extends ArrayAdapter<JSModel>{
 
 		checkBox.setSelected(model.isSelected());
 		textView.setText(model.getName());
-		imageView.setImageDrawable(model.getIcon());
+		imageView.setImageDrawable(model.getIcon());	
 
 		return convertView;
-	}
-
-	public void setItems(ArrayList<JSModel> listItems) {
-		addAll(listItems);
 	}
 }
