@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="overlay">
-        <item name="android:windowActionBar">true</item>
-        <item name="android:orientation">vertical</item>        
+                
     </style>
     <style name="text_view_style"></style>
     <style name="checkbox_sytle"></style>

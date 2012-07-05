@@ -1,9 +1,9 @@
 package com.kapserinc.justshare;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
@@ -13,61 +13,46 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.SearchView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.Toast;
 
-public class IntroActivity extends Activity {
-
-	private ArrayList<JSModel> listItems;
-	private HashSet<JSModel> selectedItems;
-	private ListView listView;
+public class SearchableActivity extends Activity {
+	
 	private InstalledAppDataProvider appDataProvider;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState){
-		super.onCreate(savedInstanceState);
+		super.onCreate(savedInstanceState);			
+		setContentView(R.layout.searchresult);
 		
-		setContentView(R.layout.main);
-		loadInstalledApps();
-		bindItemsToView();
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){
+            ActionBar actionBar = getActionBar();
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+        
+		handleIntent(getIntent());		
 	}
-	
-	private void bindItemsToView(){
-		listView = (ListView)findViewById(R.id.list_view);
-		JSArrayAdapter adapter = new JSArrayAdapter(this, listItems, selectedItems);
+
+    private void handleIntent(Intent intent) {
+        if (Intent.ACTION_VIEW.equals(intent.getAction())) {
+            // handles a click on a search suggestion; launches activity to show word
+            Intent introActivityIntent = new Intent(this, IntroActivity.class);
+            introActivityIntent.setData(intent.getData());
+            startActivity(introActivityIntent);
+        } else if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            // handles a search query
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            showResults(query);
+        }
+    }
+
+	private void showResults(String query) {
+		ListView listView = (ListView)findViewById(R.id.search_result_list_view);
+		appDataProvider = InstalledAppDataProvider.getInstance(this);
+		JSArrayAdapter adapter = new JSArrayAdapter(this, appDataProvider.getListItems(), appDataProvider.getSelectedItems());
+		adapter.getFilter().filter(query);
 		listView.setAdapter(adapter);
-		listView.setOnItemClickListener(new OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				JSArrayAdapter adapter = (JSArrayAdapter)parent.getAdapter();
-				JSModel model = adapter.getItem(position);
-				model.toggleSelection();
-				JSViewHolder viewHolder = (JSViewHolder) view.getTag();
-				viewHolder.getCheckBox().setChecked(model.isSelected());
-				if(model.isSelected()){
-					selectedItems.add(model);
-				}else{
-					selectedItems.remove(model);
-				}
-			}
-		});
-	}
-	
-	private void loadInstalledApps(){
-		appDataProvider = (InstalledAppDataProvider) getLastNonConfigurationInstance() ;
-		if(appDataProvider == null){			
-			appDataProvider = InstalledAppDataProvider.getInstance(this);
-			listItems = appDataProvider.getListItems();
-			selectedItems = appDataProvider.getSelectedItems();
-		}else{			
-			listItems = appDataProvider.getListItems();
-			selectedItems = appDataProvider.getSelectedItems();
-		}
 	}
 	
 	@Override
@@ -100,6 +85,7 @@ public class IntroActivity extends Activity {
 	}
 	
 	private void invokeShareIntent(){
+		HashSet<JSModel> selectedItems = appDataProvider.getSelectedItems();
 		if (selectedItems.size() > 0) {
 			Toast.makeText(getApplicationContext(),
 					"Sharing "+selectedItems.size()+" app(s)", Toast.LENGTH_SHORT)
@@ -129,22 +115,4 @@ public class IntroActivity extends Activity {
 		}
 		return formattedText;
 	}
-	
-	@Override
-	public void onPause(){	
-		super.onPause();
-	}
-
-	/**
-	 * Do cleanup activities (if any).
-	 */
-	@Override
-	public void onDestroy(){
-		super.onDestroy();
-	}	
-	
-	@Override
-	public Object onRetainNonConfigurationInstance() {  
-	    return appDataProvider;  
-	  } 
 }

@@ -6,10 +6,10 @@
         android:showAsAction="ifRoom|withText"
         android:title="@string/share">
     </item>
-    <item
-        android:id="@+id/settings"
-        android:icon="@drawable/settings"
-        android:showAsAction="ifRoom|withText"
-        android:title="@string/settings">
-    </item>
+    <item android:id="@+id/search"
+          android:title="@string/search_title"
+          android:icon="@drawable/ic_menu_search"
+          android:showAsAction="collapseActionView|ifRoom"
+          android:actionViewClass="android.widget.SearchView">
+     </item>
 </menu>
